@@ -1,17 +1,19 @@
 name: Cache Demo Workflow
 
 on:
-  workflow_dispatch:
-  push:
+  workflow_dispatch:  # allows manual triggering
+  push:               # triggers on push
 
 jobs:
   cache-example:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Step 2: Prime cache (required id)
       - name: Prime cache step
         id: prime-cache-824f579
         uses: actions/cache@v4
@@ -22,6 +24,7 @@ jobs:
           restore-keys: |
             cache-824f579
 
+      # Step 3: Echo cache hit/miss result
       - name: Echo cache result
         run: |
           if [ "${{ steps.prime-cache-824f579.outputs.cache-hit }}" == "true" ]; then
@@ -30,7 +33,9 @@ jobs:
             echo "Cache miss!"
           fi
 
-      - name: Install dependencies
+      # Step 4: Install dependencies (will use cache if available)
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests
+
